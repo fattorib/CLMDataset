@@ -1,5 +1,4 @@
 import jsonlines
-from matplotlib.pyplot import axes
 from transformers import GPT2Tokenizer
 import numpy as np
 import logging
@@ -20,7 +19,7 @@ logger = logging.getLogger(__name__)
 def tokenize_data(dumped_file, idx, path):
     """
     Takes a dumped chunk file and converts it to an array of tokens. For use in training,
-    these tokens must be reshaped after.
+    these tokens may be reshaped after.
     """
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
     bos = tokenizer.special_tokens_map["bos_token"]  # `<|endoftext|>`
@@ -35,7 +34,6 @@ def tokenize_data(dumped_file, idx, path):
             token_ids = tokenizer.encode(text, add_special_tokens=False)
             rslt.append(token_ids)
 
-    dp_file = f"data/interim/{path}/{dumped_file}_{idx}.pickle"
     vocab_size = tokenizer.vocab_size
     if vocab_size < (1 << 16):
         rslt_ = [np.uint16(d) for d in rslt]
@@ -43,17 +41,13 @@ def tokenize_data(dumped_file, idx, path):
         rslt_ = [np.int32(d) for d in rslt]
     random.shuffle(rslt_)
     logger.info(f"Tokenization complete. Proceeding to reshaping and serialization.")
-    # with open(dp_file, "wb") as handle:
-    #     pickle.dump(rslt_, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     return rslt_
 
 
-def dump_into_sequences(file_path, tokenized_data, idx, seq_len, path):
+def dump_into_sequences(file_path, tokenized_data, idx, path):
     """
-    From a serialized chunk of texts (or given array), reshapes to (num_seq, seq_len). To avoid the
-    case where len(serialized) % seq_len != 0, we cut off tokens to get the lengths to match.
-    There may be room for a smarter approach here.
+    From a serialized chunk of texts (or given array), saves to .npy format. 
     """
 
     if tokenized_data is None:
@@ -63,25 +57,15 @@ def dump_into_sequences(file_path, tokenized_data, idx, seq_len, path):
 
     else:
         bytes_array = tokenized_data
-
-    stacked_byte_arr = np.empty(shape=(1, seq_len + 1))
-    for byte_array in bytes_array:
-        # Remove tokens so array length is a multiple of seq_len then reshape
-        length_mod_seq = byte_array.shape[0] % (seq_len + 1)
-        byte_array = byte_array[: byte_array.shape[0] - length_mod_seq]
-        byte_array = byte_array.reshape(-1, seq_len + 1)
-        stacked_byte_arr = np.concatenate([stacked_byte_arr, byte_array], axis=0)
-
-    dp_file = f"data/processed/{path}/{file_path}_{idx}.npy"
+    
+    dp_file = f"data/processed/{path}/{file_path}_flattened_{idx}.npy"
     with open(dp_file, "wb") as handle:
-        # pickle.dump(stacked_byte_arr[1:,:], handle, protocol=pickle.HIGHEST_PROTOCOL)
-        np.save(handle, stacked_byte_arr[1:, :])
+        np.save(handle, bytes_array)
 
 
 if __name__ == "__main__":
     num_chunks = 50
 
-    # dump_into_sequences(file_path=f'books_train', idx = 0,  seq_len=512, path = 'train')
 
     for i in tqdm(range(num_chunks)):
         tokenized_data = tokenize_data(dumped_file="books_train", idx=i, path="train")
@@ -101,3 +85,6 @@ if __name__ == "__main__":
             seq_len=512,
             path="train",
         )
+
+
+
