@@ -1,4 +1,3 @@
-from pydoc import doc
 import ftfy
 import re
 import os
