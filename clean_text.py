@@ -49,18 +49,28 @@ def text_standardize(text):
     return text.strip()
 
 
-def pre_clean_data(folder_path, folder_path_out):
+def get_files(folder_path):
+    files = os.listdir(folder_path)
+
+    files = [f for f in files if ".txt" in f]
+
+    return files
+
+
+#takes in a list
+def pre_clean_data_lst(files,folder_path_in, folder_path_out):
     """
     Pre cleans the data. Using ftfy and above text_standardize function
     """
-    files = os.listdir(folder_path)
 
-    files_list = [folder_path + f"/{f}" for f in files]
+    files_list = [folder_path_in + f"/{f}" for f in files]
 
     files_out = [folder_path_out + f"/{f}" for f in files]
 
-    for file, file_out in tqdm(zip(files_list, files_out)):
-        with open(file, encoding="UTF-8") as f:
+
+    # for file, file_out in tqdm(zip(files_list, files_out)):
+    for file, file_out in zip(files_list, files_out):
+        with open(file, "r", encoding="UTF-8") as f:
             data = text_standardize(ftfy.fix_text(f.read()))
 
         with open(file_out, "w", encoding="UTF-8") as f:
@@ -68,8 +78,24 @@ def pre_clean_data(folder_path, folder_path_out):
 
     logger.info("All data files have been pre-cleaned.")
 
+# takes in a single file 
+def pre_clean_data(file,folder_path_in, folder_path_out):
+    """
+    Pre cleans the data. Using ftfy and above text_standardize function
+    """
 
-def create_jsonl_dump(folder_path, out_file, num_chunks, path, test_size=1):
+    file_in = folder_path_in + f"/{file}"
+
+    file_out= folder_path_out + f"/{file}"
+
+    with open(file_in, "r", encoding="UTF-8") as f:
+        data = text_standardize(ftfy.fix_text(f.read()))
+
+    with open(file_out, "w", encoding="UTF-8") as f:
+        f.write(data)
+
+
+def create_jsonl_dump(files, folder_path, out_file, num_chunks, path, test_size=400000):
     """
     From a folder of cleaned files, groups them into 'num_chunks' jsonl files:
         {
@@ -80,11 +106,7 @@ def create_jsonl_dump(folder_path, out_file, num_chunks, path, test_size=1):
 
     'test_size' is used to control the number of files to use for validation. 
     
-    TODO: No de-duplication is currently performed. To be added in the future.  
     """
-    files = os.listdir(folder_path)
-
-    files = [f for f in files if f != ".gitkeep"]
 
     train, val = train_test_split(files, test_size=test_size, random_state=1996)
 
