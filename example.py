@@ -9,23 +9,23 @@ import os
 if __name__ == "__main__":
     
     PROCESSES = 6
-    NUM_CHUNKS = 50
-    VALIDATION_SIZE = 3000
+    NUM_CHUNKS = 10000
+    VALIDATION_SIZE = 400000
 
     # ----- 1. Preclean text ----- #
-    # files_list = get_files(folder_path="data/raw/train")
-    # preclean_partial = partial(
-    #     pre_clean_data,
-    #     folder_path_in="data/raw/train",
-    #     folder_path_out="data/interim/train",
-    # )
+    files_list = get_files(folder_path="data/raw/train/openwebtext")
+    preclean_partial = partial(
+        pre_clean_data,
+        folder_path_in="data/raw/train/openwebtext",
+        folder_path_out="data/interim/train",
+    )
 
-    # pool = Pool(processes=PROCESSES)
-    # cnt = 0
-    # for i in tqdm(pool.imap(preclean_partial, files_list), total=len(files_list)):
-    #     pass
+    pool = Pool(processes=PROCESSES)
+    cnt = 0
+    for i in tqdm(pool.imap(preclean_partial, files_list), total=len(files_list)):
+        pass
 
-    # pool.close()
+    pool.close()
 
     # ----- 2. Dump jsonl files ----- #
     cleaned_files_list = get_files(folder_path="data/interim/train")
