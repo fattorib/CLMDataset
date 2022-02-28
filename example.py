@@ -63,22 +63,22 @@ if __name__ == "__main__":
 
     # ----- 3. Tokenize Chunks ----- #
 
-    jsonl_files_train = get_jsonl_dir(folder_path="data/interim/train", suffix='train')
-    tokenize_save_train = partial(tokenize_and_save, file_prefix = "webtext_train", path = "train")
-    pool = Pool(processes=PROCESSES)
-    cnt = 0
-    for i in tqdm(
-        pool.imap(tokenize_save_train, enumerate(jsonl_files_train)), total=len(jsonl_files_train)
-    ):
-        pass
-    pool.close()
+    # jsonl_files_train = get_jsonl_dir(folder_path="data/interim/train", suffix='webtext_train')
+    # tokenize_save_train = partial(tokenize_and_save, file_prefix = "webtext_train", path = "train")
+    # pool = Pool(processes=PROCESSES)
+    # cnt = 0
+    # for i in tqdm(
+    #     pool.imap(tokenize_save_train, enumerate(jsonl_files_train)), total=len(jsonl_files_train)
+    # ):
+    #     pass
+    # pool.close()
 
-    jsonl_files_val = get_jsonl_dir(folder_path="data/interim/train", suffix='val')
-    tokenize_save_val = partial(tokenize_and_save, file_prefix = "webtext_val", path = "train")
-    pool = Pool(processes=PROCESSES)
-    cnt = 0
-    for i in tqdm(
-        pool.imap(tokenize_save_val, enumerate(jsonl_files_val)), total=len(jsonl_files_val)
-    ):
-        pass
-    pool.close()
+    # jsonl_files_val = get_jsonl_dir(folder_path="data/interim/train", suffix='webtext_val')
+    # tokenize_save_val = partial(tokenize_and_save, file_prefix = "webtext_val", path = "train")
+    # pool = Pool(processes=PROCESSES)
+    # cnt = 0
+    # for i in tqdm(
+    #     pool.imap(tokenize_save_val, enumerate(jsonl_files_val)), total=len(jsonl_files_val)
+    # ):
+    #     pass
+    # pool.close()
