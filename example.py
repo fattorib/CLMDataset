@@ -8,7 +8,7 @@ import os
 
 if __name__ == "__main__":
     
-    PROCESSES = 6
+    PROCESSES = 16
     NUM_CHUNKS = 10000
     VALIDATION_SIZE = 400000
 
