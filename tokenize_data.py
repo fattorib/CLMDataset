@@ -1,22 +1,12 @@
+from typing import Tuple
 import jsonlines
 from transformers import GPT2Tokenizer
 import numpy as np
-import logging
-import pickle
 import random
-import time
 from tqdm import tqdm
+import os
 
-# Reads from a dumped jsonl file and tokenizes the data. Returns an array of shape (*, seq_len)
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-    datefmt="%m/%d/%Y %H:%M:%S",
-    level=logging.INFO,
-)
-logger = logging.getLogger(__name__)
-
-
-def tokenize_data(dumped_file, idx, path):
+def tokenize_data(dumped_file, path):
     """
     Takes a dumped chunk file and converts it to an array of tokens. For use in training,
     these tokens may be reshaped after.
@@ -27,7 +17,7 @@ def tokenize_data(dumped_file, idx, path):
 
     rslt = []
 
-    with jsonlines.open(f"data/interim/{path}/{dumped_file}_{idx}.jsonl") as reader:
+    with jsonlines.open(f"data/interim/{path}/{dumped_file}") as reader:
         for obj in reader:
             # Tokenize data
             text = f"{bos} {obj.strip()} {sep}"
@@ -40,28 +30,39 @@ def tokenize_data(dumped_file, idx, path):
     else:
         rslt_ = [np.int32(d) for d in rslt]
     random.shuffle(rslt_)
-    logger.info(f"Tokenization complete. Proceeding to reshaping and serialization.")
 
     return rslt_
 
 
-def dump_into_sequences(file_path, tokenized_data, idx, path):
+def dump_into_sequences(file_path, byte_array, idx, path):
     """
     From a serialized chunk of texts (or given array), saves to .npy format.
     """
 
-    if tokenized_data is None:
-        # From a tokenized pickel file, reshape to (*, seq_len)
-        with open(f"data/interim/{path}/{file_path}_{idx}.pickle", "rb") as fp:
-            bytes_array = pickle.load(fp)
-
-    else:
-        bytes_array = tokenized_data
-
-    dp_file = f"data/processed/{path}/{file_path}_flattened_{idx}.npy"
+    dp_file = f"data/processed/{path}/{file_path}_{idx}.npy"
     with open(dp_file, "wb") as handle:
-        np.save(handle, bytes_array)
+        np.save(handle, byte_array)
 
+def tokenize_and_save(dumped_file, file_prefix, path):
+
+    assert type(dumped_file) == Tuple, "Must pass an enum, not a list"
+
+    idx, dumped_file = dumped_file
+    tokenized_data = tokenize_data(dumped_file=dumped_file, path=path)
+
+    dump_into_sequences(
+            file_path=file_prefix,
+            byte_array=tokenized_data,
+            idx=idx,
+            path="train",
+        )
+
+def get_jsonl_dir(folder_path, suffix):
+    files = os.listdir(folder_path)
+
+    files = [f for f in files if ".jsonl" in f and suffix in f]
+
+    return files
 
 if __name__ == "__main__":
     num_chunks = 50

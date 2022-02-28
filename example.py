@@ -7,10 +7,13 @@ from tqdm import tqdm
 import os
 
 if __name__ == "__main__":
-    # 1. Pre clean data (multiprocessing enabled)
+    
     PROCESSES = 6
-    files_list = get_files(folder_path="data/raw/train")
+    NUM_CHUNKS = 5000
+    VALIDATION_SIZE = 400000
 
+    # ----- 1. Preclean text ----- #
+    files_list = get_files(folder_path="data/raw/train")
     preclean_partial = partial(
         pre_clean_data,
         folder_path_in="data/raw/train",
@@ -23,11 +26,11 @@ if __name__ == "__main__":
         pass
 
     pool.close()
-    # 2. dump jsonl files
 
+    # ----- 2. Dump jsonl files ----- #
     cleaned_files_list = get_files(folder_path="data/interim/train")
     train, validation = create_train_test_split(
-        cleaned_files_list, test_size=400000, num_chunks=5000
+        cleaned_files_list, test_size=VALIDATION_SIZE, num_chunks=NUM_CHUNKS
     )
     partial_train = partial(
         create_jsonl_chunked,
@@ -58,39 +61,24 @@ if __name__ == "__main__":
         pass
     pool.close()
 
-    # create_jsonl_dump(
-#     folder_path="data/interim/train",
-#     out_file="books",
-#     path="train",
-#     test_size=3000,
-#     num_chunks=50,
-# )
+    # ----- 3. Tokenize Chunks ----- #
 
+    jsonl_files_train = get_jsonl_dir(folder_path="data/interim/train", suffix='train')
+    tokenize_save_train = partial(tokenize_and_save, file_prefix = "books_train", path = "train")
+    pool = Pool(processes=PROCESSES)
+    cnt = 0
+    for i in tqdm(
+        pool.imap(tokenize_save_train, enumerate(jsonl_files_train)), total=len(jsonl_files_train)
+    ):
+        pass
+    pool.close()
 
-# create_jsonl_dump(
-#     folder_path="data/interim/train",
-#     out_file="books",
-#     path="train",
-#     test_size=3000,
-#     num_chunks=50,
-# )
-
-# # 2. Tokenize jsonl chunks
-
-# NUM_CHUNKS = 10000
-# for i in tqdm(range(NUM_CHUNKS)):
-#     tokenized_data = tokenize_data(dumped_file="books_train", idx=i, path="train")
-#     dump_into_sequences(
-#         file_path=f"books_train",
-#         tokenized_data=tokenized_data,
-#         idx=i,
-#         path="train",
-#     )
-
-#     tokenized_data = tokenize_data(dumped_file="books_val", idx=i, path="train")
-#     dump_into_sequences(
-#         file_path=f"books_val",
-#         tokenized_data=tokenized_data,
-#         idx=i,
-#         path="train",
-#     )
+    jsonl_files_val = get_jsonl_dir(folder_path="data/interim/train", suffix='val')
+    tokenize_save_val = partial(tokenize_and_save, file_prefix = "books_val", path = "train")
+    pool = Pool(processes=PROCESSES)
+    cnt = 0
+    for i in tqdm(
+        pool.imap(tokenize_save_val, enumerate(jsonl_files_val)), total=len(jsonl_files_val)
+    ):
+        pass
+    pool.close()

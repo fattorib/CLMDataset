@@ -1,11 +1,9 @@
-from enum import Enum
-from typing import List, Tuple
+from typing import Tuple
 import ftfy
 import re
 import os
 from tqdm import tqdm
 import jsonlines
-import io
 from sklearn.model_selection import train_test_split
 import logging
 
@@ -17,19 +15,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-"""
-Cleans, standardizes all text and parses documents into .jsonl chunks with the format:
-
-{
-    'text': *document 1 txt*,
-    'text': *document 2 txt*,
-    ...
-    
-}
-
-"""
-
-# GPT1 text cleaning
 def text_standardize(text):
     """
     fixes some issues the spacy tokenizer had on books corpus
