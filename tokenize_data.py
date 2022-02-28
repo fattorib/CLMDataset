@@ -47,7 +47,7 @@ def tokenize_data(dumped_file, idx, path):
 
 def dump_into_sequences(file_path, tokenized_data, idx, path):
     """
-    From a serialized chunk of texts (or given array), saves to .npy format. 
+    From a serialized chunk of texts (or given array), saves to .npy format.
     """
 
     if tokenized_data is None:
@@ -57,7 +57,7 @@ def dump_into_sequences(file_path, tokenized_data, idx, path):
 
     else:
         bytes_array = tokenized_data
-    
+
     dp_file = f"data/processed/{path}/{file_path}_flattened_{idx}.npy"
     with open(dp_file, "wb") as handle:
         np.save(handle, bytes_array)
@@ -65,7 +65,6 @@ def dump_into_sequences(file_path, tokenized_data, idx, path):
 
 if __name__ == "__main__":
     num_chunks = 50
-
 
     for i in tqdm(range(num_chunks)):
         tokenized_data = tokenize_data(dumped_file="books_train", idx=i, path="train")
@@ -85,6 +84,3 @@ if __name__ == "__main__":
             seq_len=512,
             path="train",
         )
-
-
-
