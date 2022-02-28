@@ -142,11 +142,11 @@ def create_train_test_split(files, test_size, num_chunks):
     docs_per_chunk = len(train) // num_chunks
 
     train_document_list = []
-    for i in tqdm(range(0, num_chunks)):
+    for i in range(0, num_chunks):
         train_document_list.append(train[i * docs_per_chunk : (i + 1) * docs_per_chunk])
 
     val_document_list = []
-    for i in tqdm(range(0, num_chunks)):
+    for i in range(0, num_chunks):
         val_document_list.append(val[i * docs_per_chunk : (i + 1) * docs_per_chunk])
 
     return train_document_list, val_document_list
@@ -157,8 +157,6 @@ def create_jsonl_chunked(file_list, folder_path, suffix, out_file, path):
     """
     Dumps list of files into a single jsonl chunk
     """
-
-    assert type(file_list) == Tuple, "Must pass an enum, not a list"
     i, data = file_list
 
     texts_arr = []

@@ -45,8 +45,6 @@ def dump_into_sequences(file_path, byte_array, idx, path):
 
 def tokenize_and_save(dumped_file, file_prefix, path):
 
-    assert type(dumped_file) == Tuple, "Must pass an enum, not a list"
-
     idx, dumped_file = dumped_file
     tokenized_data = tokenize_data(dumped_file=dumped_file, path=path)
 
