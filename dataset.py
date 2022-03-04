@@ -64,6 +64,9 @@ class CLMDataset(Dataset):
         return {i: idx_sample[i] for i in range(len(idx_sample))}, len(idx_sample)
 
     def reset_data(self, chunk_idx):
+        """
+        Once a chunk of data has been exhausted, update to a new chunk
+        """
         try:
             with open(
                 f"{self.base_dir}/data/{self.data_path}/{self.token_path}_{chunk_idx}.npy",
