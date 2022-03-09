@@ -6,9 +6,12 @@ from functools import partial
 from tqdm import tqdm
 import os
 
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 if __name__ == "__main__":
     
-    PROCESSES = 6
+    PROCESSES = 8
     NUM_CHUNKS = 100
     VALIDATION_SIZE = 400000
 
