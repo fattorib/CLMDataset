@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from typing import Tuple
 import jsonlines
 from transformers import GPT2Tokenizer
@@ -21,7 +22,7 @@ def tokenize_data(dumped_file, path):
         for obj in reader:
             # Tokenize data
             text = f"{bos} {obj.strip()} {sep}"
-            token_ids = tokenizer.encode(text, add_special_tokens=False)
+            token_ids = tokenizer.encode(text, add_special_tokens=False, verbose=False)
             rslt.append(token_ids)
 
     vocab_size = tokenizer.vocab_size
@@ -65,21 +66,13 @@ def get_jsonl_dir(folder_path, suffix):
 if __name__ == "__main__":
     num_chunks = 50
 
-    for i in tqdm(range(num_chunks)):
-        tokenized_data = tokenize_data(dumped_file="books_train", idx=i, path="train")
-        dump_into_sequences(
-            file_path=f"books_train",
-            tokenized_data=tokenized_data,
-            idx=i,
-            seq_len=512,
-            path="train",
-        )
+    
+    # tokenized_data = tokenize_data(dumped_file="openwebtext_train_0.jsonl", path="train")
 
-        tokenized_data = tokenize_data(dumped_file="books_val", idx=i, path="train")
-        dump_into_sequences(
-            file_path=f"books_val",
-            tokenized_data=tokenized_data,
-            idx=i,
-            seq_len=512,
-            path="train",
-        )
+    # print(tokenize_data)
+    # print(type(tokenize_data))
+
+    with jsonlines.open(f"data/interim/train/openwebtext_train_0.jsonl") as reader:
+        for obj in reader:
+            print(obj)
+            break
