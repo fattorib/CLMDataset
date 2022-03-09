@@ -9,8 +9,8 @@ import os
 if __name__ == "__main__":
     
     PROCESSES = 6
-    NUM_CHUNKS = 50
-    VALIDATION_SIZE = 3000
+    NUM_CHUNKS = 100
+    VALIDATION_SIZE = 400000
 
     # ----- 1. Preclean text ----- #
     # files_list = get_files(folder_path="data/raw/train/openwebtext")
