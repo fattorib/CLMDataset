@@ -13,7 +13,6 @@ def tokenize_data(dumped_file, path):
     these tokens may be reshaped after.
     """
     tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    bos = tokenizer.special_tokens_map["bos_token"]  # `<|endoftext|>`
     sep = tokenizer.special_tokens_map["eos_token"]  # `<|endoftext|>`
 
     rslt = []
@@ -21,7 +20,7 @@ def tokenize_data(dumped_file, path):
     with jsonlines.open(f"data/interim/{path}/{dumped_file}") as reader:
         for obj in reader:
             # Tokenize data
-            text = f"{bos} {obj.strip()} {sep}"
+            text = f"{obj.strip()} {sep}"
             token_ids = tokenizer.encode(text, add_special_tokens=False, verbose=False)
             rslt.append(token_ids)
 
@@ -71,8 +70,11 @@ if __name__ == "__main__":
 
     # print(tokenize_data)
     # print(type(tokenize_data))
-
+    i = 0
     with jsonlines.open(f"data/interim/train/openwebtext_train_0.jsonl") as reader:
         for obj in reader:
-            print(obj)
-            break
+            if i < 10:
+                print(obj)
+                i+=1
+            else:
+                break
