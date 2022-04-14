@@ -12,7 +12,7 @@ if __name__ == "__main__":
     
     PROCESSES = 6
     NUM_CHUNKS = 20
-    VALIDATION_SIZE = 3000
+    VALIDATION_SIZE = 800000 #around 10% of .txt files for openwebtext, used 3k for bookcorpus
     FILE_PREFIX = 'bookcorpus'
 
     # ----- 1. Preclean text ----- #
@@ -39,7 +39,7 @@ if __name__ == "__main__":
         create_jsonl_chunked,
         folder_path="data/interim/train",
         suffix="train",
-        out_file="bookcorpus",
+        out_file=FILE_PREFIX,
         path="train",
     )
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         create_jsonl_chunked,
         folder_path="data/interim/train",
         suffix="val",
-        out_file="bookcorpus",
+        out_file=FILE_PREFIX,
         path="train",
     )
     pool = Pool(processes=PROCESSES)
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     pool.close()
 
     jsonl_files_val = get_jsonl_dir(folder_path="data/interim/train", suffix=f'{FILE_PREFIX}_val')
-    tokenize_save_val = partial(tokenize_and_save, file_prefix = "{FILE_PREFIX}_val", path = "train")
+    tokenize_save_val = partial(tokenize_and_save, file_prefix = f"{FILE_PREFIX}_val", path = "train")
     pool = Pool(processes=PROCESSES)
     cnt = 0
     for i in tqdm(
