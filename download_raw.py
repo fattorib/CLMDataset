@@ -8,5 +8,5 @@ if __name__ == "__main__":
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
     )
     s3.download_file(
-        "openwebtextbf", "processed/openwebtext_cleaned.tar.gz", "data/interim/train/corpus.tar.gz"
+        "openwebtxtbf", "processed/openwebtext_cleaned.tar.gz", "data/interim/train/corpus.tar.gz"
     )
