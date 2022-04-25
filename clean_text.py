@@ -17,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 def text_standardize(text):
     """
-    fixes some issues the spacy tokenizer had on books corpus
-    also does some whitespace standardization
+    from GPT1 repo. Standard text cleaning
     """
     text = text.replace("—", "-")
     text = text.replace("–", "-")
@@ -47,7 +46,7 @@ def get_files(folder_path):
 # takes in a list
 def pre_clean_data_lst(files, folder_path_in, folder_path_out):
     """
-    Pre cleans the data. Using ftfy and above text_standardize function
+    Pre cleans the data. Using ftfy and text_standardize. Input is a list of files.
     """
 
     files_list = [folder_path_in + f"/{f}" for f in files]
@@ -68,7 +67,7 @@ def pre_clean_data_lst(files, folder_path_in, folder_path_out):
 # takes in a single file. Useful for multiprocessing
 def pre_clean_data(file, folder_path_in, folder_path_out):
     """
-    Pre cleans the data. Using ftfy and above text_standardize function
+    Pre cleans the data. Using ftfy and text_standardize. Input is a single file.
     """
 
     file_in = folder_path_in + f"/{file}"
@@ -82,7 +81,6 @@ def pre_clean_data(file, folder_path_in, folder_path_out):
         f.write(data)
 
 
-# Takes lists as input
 def create_jsonl_dump(files, folder_path, out_file, num_chunks, path, test_size=400000):
     """
     From a folder of cleaned files, groups them into 'num_chunks' jsonl files:
@@ -152,7 +150,6 @@ def create_train_test_split(files, test_size, num_chunks):
     return train_document_list, val_document_list
 
 
-# Takes lists as input
 def create_jsonl_chunked(file_list, folder_path, suffix, out_file, path):
     """
     Dumps list of files into a single jsonl chunk
@@ -169,10 +166,3 @@ def create_jsonl_chunked(file_list, folder_path, suffix, out_file, path):
         f"data/interim/{path}/{out_file}_{suffix}_{i}.jsonl", mode="w"
     ) as writer:
         writer.write_all(texts_arr)
-
-
-if __name__ == "__main__":
-
-    files = get_files(folder_path="data/raw/train")
-
-    a, b = create_train_test_split(files, test_size=300, num_chunks=50)

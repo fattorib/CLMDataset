@@ -7,6 +7,7 @@ import random
 from tqdm import tqdm
 import os
 
+
 def tokenize_data(dumped_file, path):
     """
     Takes a dumped chunk file and converts it to an array of tokens. For use in training,
@@ -43,17 +44,19 @@ def dump_into_sequences(file_path, byte_array, idx, path):
     with open(dp_file, "wb") as handle:
         np.save(handle, byte_array)
 
+
 def tokenize_and_save(dumped_file, file_prefix, path):
 
     idx, dumped_file = dumped_file
     tokenized_data = tokenize_data(dumped_file=dumped_file, path=path)
 
     dump_into_sequences(
-            file_path=file_prefix,
-            byte_array=tokenized_data,
-            idx=idx,
-            path="train",
-        )
+        file_path=file_prefix,
+        byte_array=tokenized_data,
+        idx=idx,
+        path="train",
+    )
+
 
 def get_jsonl_dir(folder_path, suffix):
     files = os.listdir(folder_path)
@@ -62,10 +65,10 @@ def get_jsonl_dir(folder_path, suffix):
 
     return files
 
+
 if __name__ == "__main__":
     num_chunks = 50
 
-    
     # tokenized_data = tokenize_data(dumped_file="openwebtext_train_0.jsonl", path="train")
 
     # print(tokenize_data)
@@ -75,6 +78,6 @@ if __name__ == "__main__":
         for obj in reader:
             if i < 10:
                 print(obj)
-                i+=1
+                i += 1
             else:
                 break
