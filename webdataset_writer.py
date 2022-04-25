@@ -18,7 +18,16 @@ def parse():
         "--num-ctx",
         default=100, type=int
     )
-    
+
+    parser.add_argument(
+        "--num-train-chunks",
+        default=100, type=int
+    )
+
+    parser.add_argument(
+        "--num-train-validation-chunks",
+        default=100, type=int
+    )
 
     args = parser.parse_args()
     return args
@@ -38,14 +47,14 @@ def main():
         maxsize=int(1e9),
         maxcount=int(1e5),
     ) as sink:
-        for chunk in tqdm(range(0, 100)):
+        for chunk in tqdm(range(0, args.num_train_chunks)):
             data, shape = open_chunk(
                 filename=f"{CORPUS_PREFIX}_train", chunk_idx=chunk, N_CTX=N_CTX
             )
             for i, index in enumerate(data):
                 sample = {
                     "__key__": f"sample_{i+index_counter}",
-                    "input_id.pth": torch.tensor(index[: N_CTX + 1]),
+                    "input_id.pth": torch.tensor(index[: N_CTX]),
                 }
                 sink.write(sample)
             index_counter += shape[0]
@@ -56,7 +65,7 @@ def main():
         maxsize=int(1e9),
         maxcount=int(1e5),
     ) as sink:
-        for chunk in tqdm(range(0, 10)):
+        for chunk in tqdm(range(0, args.num_validation_chunks)):
             data, shape = open_chunk(
                 filename=f"{CORPUS_PREFIX}_val", chunk_idx=chunk, N_CTX=N_CTX
             )
@@ -75,7 +84,7 @@ def main():
     metadata["n_ctx"] = N_CTX
 
     index_counter = 0
-    for chunk in tqdm(range(0, 100)):
+    for chunk in tqdm(range(0, args.num_train_chunks)):
         data, shape = open_chunk(
             filename=f"{CORPUS_PREFIX}_train", chunk_idx=chunk, N_CTX=N_CTX
         )
@@ -84,7 +93,7 @@ def main():
     metadata["num_train_samples"] = index_counter
 
     index_counter = 0
-    for chunk in tqdm(range(0, 10)):
+    for chunk in tqdm(range(0, args.num_validation_chunks)):
         data, shape = open_chunk(
             filename=f"{CORPUS_PREFIX}_val", chunk_idx=chunk, N_CTX=N_CTX
         )
