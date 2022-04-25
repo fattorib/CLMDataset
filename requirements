@@ -1,0 +1,7 @@
+numpy 
+jsonlines
+ftfy
+tqdm
+scikit-learn
+transformers
+webdataset
