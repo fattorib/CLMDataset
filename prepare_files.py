@@ -1,7 +1,7 @@
 from multiprocessing import Pool
 from functools import partial
-from clean_text import *
-from tokenize_data import *
+from src.clean_text import *
+from src.tokenize_data import *
 from tqdm import tqdm
 import os
 import argparse
