@@ -8,32 +8,21 @@ import argparse
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+
 def parse():
     parser = argparse.ArgumentParser(description="Preparing CLM dataset files")
 
-    parser.add_argument(
-        "--num-processes",
-        default=6, type=int
-    )
+    parser.add_argument("--num-processes", default=4, type=int)
 
-    parser.add_argument(
-        "--num-chunks",
-        default=100, type=int
-    )
+    parser.add_argument("--num-chunks", default=5, type=int)
 
-    parser.add_argument(
-        "--validation-size",
-        default=800000, type=int
-    )
+    parser.add_argument("--validation-size", default=12000, type=int)
 
-    parser.add_argument(
-        "--file-prefix",
-        default="bookcorpus", type=str
-    )
-    
+    parser.add_argument("--file-prefix", default="arxiv", type=str)
 
     args = parser.parse_args()
     return args
+
 
 def main():
 
@@ -45,53 +34,53 @@ def main():
     FILE_PREFIX = args.file_prefix
 
     # ----- 1. Preclean text ----- #
-    files_list = get_files(folder_path="data/raw/train")
-    preclean_partial = partial(
-        pre_clean_data,
-        folder_path_in="data/raw/train",
-        folder_path_out="data/interim/train",
-    )
+    # files_list = get_files(folder_path="data/raw/train")
+    # preclean_partial = partial(
+    #     pre_clean_data,
+    #     folder_path_in="data/raw/train",
+    #     folder_path_out="data/interim/train",
+    # )
 
-    pool = Pool(processes=PROCESSES)
-    cnt = 0
-    for i in tqdm(pool.imap(preclean_partial, files_list), total=len(files_list)):
-        pass
+    # pool = Pool(processes=PROCESSES)
+    # cnt = 0
+    # for i in tqdm(pool.imap(preclean_partial, files_list), total=len(files_list)):
+    #     pass
 
-    pool.close()
+    # pool.close()
 
     # ----- 2. Dump jsonl files ----- #
-    cleaned_files_list = get_files(folder_path="data/interim/train")
-    train, validation = create_train_test_split(
-        cleaned_files_list, test_size=VALIDATION_SIZE, num_chunks=NUM_CHUNKS
-    )
-    partial_train = partial(
-        create_jsonl_chunked,
-        folder_path="data/interim/train",
-        suffix="train",
-        out_file=FILE_PREFIX,
-        path="train",
-    )
+    # cleaned_files_list = get_files(folder_path="data/interim/train")
+    # train, validation = create_train_test_split(
+    #     cleaned_files_list, test_size=VALIDATION_SIZE, num_chunks=NUM_CHUNKS
+    # )
+    # partial_train = partial(
+    #     create_jsonl_chunked,
+    #     folder_path="data/interim/train",
+    #     suffix="train",
+    #     out_file=FILE_PREFIX,
+    #     path="train",
+    # )
 
-    pool = Pool(processes=PROCESSES)
-    cnt = 0
-    for i in tqdm(pool.imap(partial_train, enumerate(train)), total=len(train)):
-        pass
-    pool.close()
+    # pool = Pool(processes=PROCESSES)
+    # cnt = 0
+    # for i in tqdm(pool.imap(partial_train, enumerate(train)), total=len(train)):
+    #     pass
+    # pool.close()
 
-    partial_validation = partial(
-        create_jsonl_chunked,
-        folder_path="data/interim/train",
-        suffix="val",
-        out_file=FILE_PREFIX,
-        path="train",
-    )
-    pool = Pool(processes=PROCESSES)
-    cnt = 0
-    for i in tqdm(
-        pool.imap(partial_validation, enumerate(validation)), total=len(train)
-    ):
-        pass
-    pool.close()
+    # partial_validation = partial(
+    #     create_jsonl_chunked,
+    #     folder_path="data/interim/train",
+    #     suffix="val",
+    #     out_file=FILE_PREFIX,
+    #     path="train",
+    # )
+    # pool = Pool(processes=PROCESSES)
+    # cnt = 0
+    # for i in tqdm(
+    #     pool.imap(partial_validation, enumerate(validation)), total=len(validation)
+    # ):
+    #     pass
+    # pool.close()
 
     # ----- 3. Tokenize Chunks ----- #
 
@@ -128,6 +117,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-
-    
