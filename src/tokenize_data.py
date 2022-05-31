@@ -13,7 +13,8 @@ def tokenize_data(dumped_file, path):
     Takes a dumped chunk file and converts it to an array of tokens. For use in training,
     these tokens may be reshaped after.
     """
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2_arxiv")
+    # tokenizer = GPT2Tokenizer.from_pretrained("gpt2_arxiv")
+    tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
     sep = tokenizer.special_tokens_map["eos_token"]  # `<|endoftext|>`
 
     rslt = []

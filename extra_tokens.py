@@ -1,4 +1,5 @@
 # Adding Control Codes for Area a la https://arxiv.org/abs/1909.05858
+# Total of 23 extra tokens
 EXTRA_TOKENS = [
     "[Abstract]",
     "[Title]",
@@ -25,14 +26,15 @@ EXTRA_TOKENS = [
     "[Statistics]",
 ]
 
-from transformers import GPT2Tokenizer  
+print(len(EXTRA_TOKENS))
+# from transformers import GPT2Tokenizer  
 
 
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2_arxiv")
+# tokenizer = GPT2Tokenizer.from_pretrained("gpt2_arxiv")
 
-with open('test.txt', 'r') as f:
-    text = f.read()
+# with open('test.txt', 'r') as f:
+#     text = f.read()
 
-encoded = tokenizer.encode(text)
+# encoded = tokenizer.encode(text)
 
-print(encoded)
+# print(encoded)
