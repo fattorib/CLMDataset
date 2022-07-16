@@ -88,7 +88,7 @@ def main():
     pool = Pool(processes=PROCESSES)
     cnt = 0
     for i in tqdm(
-        pool.imap(partial_validation, enumerate(validation)), total=len(train)
+        pool.imap(partial_validation, enumerate(validation)), total=len(validation)
     ):
         pass
     pool.close()
